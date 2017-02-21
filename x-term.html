@@ -1,0 +1,30 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="../xterm.js/dist/xterm.js"></script>
+
+<link rel="import" href="xterm-styles.html">
+
+<dom-module id="x-term">
+	<template>
+		<style is="custom-style" include="xterm-styles">
+			:host {
+				display: block;
+				overflow: hidden;
+			}
+		</style>
+		<div id="terminal">babl</div>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'x-term',
+
+		properties: {},
+
+		ready: function () {
+
+		}
+	})
+</script>
+
+

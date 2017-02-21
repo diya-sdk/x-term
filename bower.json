@@ -1,0 +1,20 @@
+{
+  "name": "x-term",
+  "authors": [
+    "Sylvain Mahé <sylvain.mahe@partnering.fr>"
+  ],
+  "description": "web component wrapper for the xtermjs library",
+  "main": "x-term.html",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "xterm.js": "sourcelair/xterm.js#^2.3.2"
+  }
+}
