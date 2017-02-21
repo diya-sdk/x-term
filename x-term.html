@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <script src="../xterm.js/dist/xterm.js"></script>
+<script src="../javascript-detect-element-resize/detect-element-resize.js"></script>
 
 <link rel="import" href="xterm-styles.html">
 
@@ -10,8 +11,12 @@
 				display: block;
 				overflow: hidden;
 			}
+
+			#terminal {
+				height: 100%;
+			}
 		</style>
-		<div id="terminal">babl</div>
+		<div id="terminal"></div>
 	</template>
 </dom-module>
 
@@ -21,8 +26,31 @@
 
 		properties: {},
 
-		ready: function () {
+		ready () {
+			this.terminal = new Terminal()
+			this.scopeSubtree(this.$.terminal, true)
+			this.terminal.open(this.$.terminal)
+			addResizeListener(this.$.terminal, () => this.onResize())
+			this.terminal.on('data', data => this.fire('data', data))
+			this.terminal.on('resize', size => this.fire('resize', size))
+		},
 
+		cols () { return this.terminal.cols },
+
+		rows () { return this.terminal.rows },
+
+		write (data) { this.terminal.write(data) },
+		writeln (data) { this.terminal.writeln(data) },
+
+		onResize () {
+			this.terminal.charMeasure.measure()
+			let charWidth = this.terminal.charMeasure.width
+			let charHeight = this.terminal.charMeasure.height
+
+			let width = this.clientWidth
+			let height = this.clientHeight
+
+			this.terminal.resize(Math.floor(width / charWidth), Math.floor(height / charHeight))
 		}
 	})
 </script>
