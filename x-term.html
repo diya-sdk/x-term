@@ -30,6 +30,7 @@
 			this.terminal = new Terminal()
 			this.scopeSubtree(this.$.terminal, true)
 			this.terminal.open(this.$.terminal)
+			this.terminal.setOption('scrollback', 500)
 			addResizeListener(this.$.terminal, () => this.onResize())
 			this.terminal.on('data', data => this.fire('data', data))
 			this.terminal.on('resize', size => this.fire('resize', size))
@@ -41,6 +42,7 @@
 
 		write (data) { this.terminal.write(data) },
 		writeln (data) { this.terminal.writeln(data) },
+		clear () { this.terminal.clear() },
 
 		onResize () {
 			this.terminal.charMeasure.measure()
@@ -50,7 +52,7 @@
 			let width = this.clientWidth
 			let height = this.clientHeight
 
-			this.terminal.resize(Math.floor(width / charWidth), Math.floor(height / charHeight))
+			this.terminal.resize(Math.floor(width / charWidth) - 2, Math.floor(height / charHeight))
 		}
 	})
 </script>
