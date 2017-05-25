@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <script src="../xterm.js/dist/xterm.js"></script>
+<script src="../xterm.js/dist/addons/fit/fit.js"></script>
 <script src="../javascript-detect-element-resize/detect-element-resize.js"></script>
 
 <link rel="import" href="xterm-styles.html">
@@ -21,7 +22,7 @@
 </dom-module>
 
 <script>
-
+/*
 	///////////////////////////////////////////////////////////////////////////////////
 	//////////////////// UGLY PATCHING Polymer scopeSubtree ///////////////////////////
 	/////////// TODO: remove when Polymer/polymer pullrequest 3336 is merged //////////
@@ -69,7 +70,7 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
-
+*/
 	Polymer({
 		is: 'x-term',
 	
@@ -77,7 +78,7 @@
 	
 		ready () {
 			this.terminal = new Terminal()
-			this.scopeSubtree(this.$.terminal, true)
+			//this.scopeSubtree(this.$.terminal, true)
 			this.terminal.open(this.$.terminal)
 			this.terminal.setOption('scrollback', 500)
 			addResizeListener(this.$.terminal, () => this.onResize())
@@ -94,14 +95,7 @@
 		clear () { this.terminal.clear() },
 
 		onResize () {
-			this.terminal.charMeasure.measure()
-			let charWidth = this.terminal.charMeasure.width
-			let charHeight = this.terminal.charMeasure.height
-	
-			let width = this.clientWidth
-			let height = this.clientHeight
-	
-			this.terminal.resize(Math.floor(width / charWidth) - 2, Math.floor(height / charHeight))
+			this.terminal.fit()
 		}
 	})
 </script>
