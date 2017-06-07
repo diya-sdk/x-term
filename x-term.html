@@ -1,103 +1,53 @@
 <link rel="import" href="../polymer/polymer.html">
 <script src="../xterm.js/dist/xterm.js"></script>
 <script src="../xterm.js/dist/addons/fit/fit.js"></script>
-<script src="../javascript-detect-element-resize/detect-element-resize.js"></script>
-
 <link rel="import" href="xterm-styles.html">
 
 <dom-module id="x-term">
 	<template>
-		<style is="custom-style" include="xterm-styles">
+		<style include="xterm-styles">
 			:host {
-				display: block;
-				overflow: hidden;
+				display: flex;
 			}
 
 			#terminal {
-				height: 100%;
+				flex: 1;
 			}
 		</style>
 		<div id="terminal"></div>
 	</template>
+	<script>
+		class XTerm extends Polymer.Element {
+			static get is () { return 'x-term' }
+			static get properties () {
+				return {}
+			}
+
+			connectedCallback () {
+				super.connectedCallback()
+
+				let termDiv = this.$.terminal
+				this._term = new Terminal()
+				this._term.open(termDiv)
+				this._term.setOption('scrollback', 500)
+				this._term.on('data', data => this.dispatchEvent(new CustomEvent('data', {detail: data})))
+					
+				this._term.fit()
+			}
+		
+			cols () { return this._term.cols }
+			rows () { return this._term.rows }
+			write (data) { this._term.write(data) }
+			writeln (data) { this._term.writeln(data) }
+			clear () { this._term.clear() }
+			fit () { console.log('fit'); this._term.fit() }
+		}
+
+
+		customElements.define(XTerm.is, XTerm)
+	</script>
 </dom-module>
 
-<script>
-/*
-	///////////////////////////////////////////////////////////////////////////////////
-	//////////////////// UGLY PATCHING Polymer scopeSubtree ///////////////////////////
-	/////////// TODO: remove when Polymer/polymer pullrequest 3336 is merged //////////
-	///////////////////////////////////////////////////////////////////////////////////
-	if (Polymer) {
-		let nativeShadow = Polymer.Settings.useNativeShadow;
-		Polymer.Base._addFeature({
-			scopeSubtree: function (container, shouldObserve) {
-				if (nativeShadow) {
-					return;
-				}
-				var self = this;
-				var scopify = function (node) {
-					if (node.nodeType === Node.ELEMENT_NODE) {
-						var className = node.getAttribute('class');
-						//node.setAttribute('class', self._scopeElementClass(node, className));
-						node.classList.add(Polymer.StyleTransformer.SCOPE_NAME, self.is);
-						var n$ = node.querySelectorAll('*');
-						for (var i = 0, n; i < n$.length && (n = n$[i]); i++) {
-							className = n.getAttribute('class');
-							//n.setAttribute('class', self._scopeElementClass(n, className));
-							n.classList.add(Polymer.StyleTransformer.SCOPE_NAME, self.is);
-						}
-					}
-				};
-				scopify(container);
-				if (shouldObserve) {
-					var mo = new MutationObserver(function (mxns) {
-						for (var i = 0, m; i < mxns.length && (m = mxns[i]); i++) {
-							if (m.addedNodes) {
-								for (var j = 0; j < m.addedNodes.length; j++) {
-									scopify(m.addedNodes[j]);
-								}
-							}
-						}
-					});
-					mo.observe(container, {
-						childList: true,
-						subtree: true
-					});
-					return mo;
-				}
-			}
-		})
-	}
 
-	//////////////////////////////////////////////////////////////////////////////////
-*/
-	Polymer({
-		is: 'x-term',
-	
-		properties: {},
-	
-		ready () {
-			this.terminal = new Terminal()
-			//this.scopeSubtree(this.$.terminal, true)
-			this.terminal.open(this.$.terminal)
-			this.terminal.setOption('scrollback', 500)
-			addResizeListener(this.$.terminal, () => this.onResize())
-			this.terminal.on('data', data => this.fire('data', data))
-			this.terminal.on('resize', size => this.fire('resize', size))
-		},
-
-		cols () { return this.terminal.cols },
-	
-		rows () { return this.terminal.rows },
-	
-		write (data) { this.terminal.write(data) },
-		writeln (data) { this.terminal.writeln(data) },
-		clear () { this.terminal.clear() },
-
-		onResize () {
-			this.terminal.fit()
-		}
-	})
-</script>
 
 
