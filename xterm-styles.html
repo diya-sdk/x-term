@@ -48,6 +48,17 @@
     position: relative;
 }
 
+/*issue #1 display bug resolved by add css part that get found in file xterm.css, line 178 of module xterm
+and that included in 'xterm-styles.html*/
+.terminal .xterm-selection {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	opacity: 0.3;
+	pointer-events: none;
+}
+
 .terminal.focus,
 .terminal:focus {
     outline: none;
